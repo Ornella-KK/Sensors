@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider extends ChangeNotifier {
   ThemeData _selectedTheme = ThemeData.dark();
+  String _imagePath = '';
 
   ThemeData light = ThemeData.light().copyWith(
     primaryColor: Colors.green[700],
@@ -18,6 +19,13 @@ class ThemeProvider extends ChangeNotifier {
 
 
   ThemeData get getTheme => _selectedTheme;
+  
+  String get imagePath => _imagePath;
+
+  void setImagePath(String path) {
+    _imagePath = path;
+    notifyListeners();
+  }
 
   Future<void> swapTheme() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

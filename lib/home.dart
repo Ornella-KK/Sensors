@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:navigation/Auths/googleIn.dart';
+import 'package:provider/provider.dart';
 
 class WelcomePage extends StatelessWidget {
+  final String name;
+  final String email;
+  const WelcomePage({Key? key, required this.name, required this.email}) : super(key: key);
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,22 +17,22 @@ class WelcomePage extends StatelessWidget {
           children: [
             SizedBox(height: 20),
             Text(
-              'Welcome to Our Calculator App!',
+              'Welcome Back, $name!',
               style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: 20),
-            Image.asset(
-              'assets/images/calculator.jpeg', // Your calculator app image
+            /* Image.asset(
+              'assets/images/calculator.jpeg',
               width: 200,
               height: 200,
               fit: BoxFit.contain,
-            ),
+            ), */
             SizedBox(height: 20),
             Text(
-              'This app provides a powerful yet simple calculator tool to help you with your calculations.',
+              'Enter a world of convenience with our intuitive tools and easy customization options.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 18,

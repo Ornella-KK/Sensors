@@ -1,14 +1,20 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:navigation/Auths/googleIn.dart';
+import 'package:navigation/Auths/login.dart';
+import 'package:navigation/Auths/logout.dart';
 import 'package:navigation/Auths/welcome.dart';
 import 'package:navigation/about.dart';
 import 'package:navigation/calculator.dart';
+import 'package:navigation/contacts.dart';
 import 'package:navigation/controller/dependency_injection.dart';
 import 'package:navigation/home.dart';
 import 'package:navigation/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'Auths/signup.dart';
 
 Future<void> main() async {
@@ -39,6 +45,11 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
+  final String name;
+  final String email;
+  const HomePage({Key? key, required this.name, required this.email})
+      : super(key: key);
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -52,11 +63,11 @@ class _MyHomePageState extends State<HomePage> {
     var themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     var container;
     if (currentPage == DrawerSections.home) {
-      container = WelcomePage();
+      container = WelcomePage(name: widget.name, email: widget.email);
     } else if (currentPage == DrawerSections.calculator) {
       container = Calculator();
-    } else if (currentPage == DrawerSections.about) {
-      container = AboutPage();
+    } else if (currentPage == DrawerSections.contacts) {
+      container = ContactPage();
     }
     return Scaffold(
       appBar: AppBar(
@@ -91,8 +102,15 @@ class _MyHomePageState extends State<HomePage> {
               currentPage == DrawerSections.home ? true : false),
           menuItem(2, "Calculator", Icons.calculate_rounded,
               currentPage == DrawerSections.calculator ? true : false),
-          menuItem(3, "About", Icons.adobe_outlined,
-              currentPage == DrawerSections.about ? true : false),
+          menuItem(3, "Contacts", Icons.contacts,
+              currentPage == DrawerSections.contacts ? true : false),
+          Divider(),
+          menuItem(
+            4,
+            "Logout",
+            Icons.logout,
+            false,
+          )
         ],
       ),
     );
@@ -103,19 +121,25 @@ class _MyHomePageState extends State<HomePage> {
       color: selected ? Colors.grey[300] : Colors.transparent,
       child: InkWell(
         onTap: () {
-          Navigator.pop(context);
-          setState(() {
-            if (id == 1) {
-              currentPage = DrawerSections.home;
-              appBarTitle = "Home";
-            } else if (id == 2) {
-              currentPage = DrawerSections.calculator;
-              appBarTitle = "Calculator";
-            } else if (id == 3) {
-              currentPage = DrawerSections.about;
-              appBarTitle = "About";
-            }
-          });
+          Navigator.pop(context); // Close the drawer
+          if (id == 4) {
+            LoginAPI.signOut();
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => SignUp()));
+          } else {
+            setState(() {
+              if (id == 1) {
+                currentPage = DrawerSections.home;
+                appBarTitle = "Home";
+              } else if (id == 2) {
+                currentPage = DrawerSections.calculator;
+                appBarTitle = "Calculator";
+              } else if (id == 3) {
+                currentPage = DrawerSections.contacts;
+                appBarTitle = "Contacts";
+              }
+            });
+          }
         },
         child: Padding(
           padding: EdgeInsets.all(15.0),
@@ -129,14 +153,15 @@ class _MyHomePageState extends State<HomePage> {
                 ),
               ),
               Expanded(
-                  flex: 3,
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                    ),
-                  ))
+                flex: 3,
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                  ),
+                ),
+              )
             ],
           ),
         ),
@@ -151,6 +176,15 @@ class MyHeaderDrawer extends StatefulWidget {
 }
 
 class _MyHeaderDrawerState extends State<MyHeaderDrawer> {
+  XFile? _image;
+  String? _imagepath;
+
+  @override
+  void initState() {
+    super.initState();
+    LoadImage();
+  }
+
   @override
   Widget build(BuildContext context) {
     var themeProvider = Provider.of<ThemeProvider>(context, listen: false);
@@ -180,6 +214,28 @@ class _MyHeaderDrawerState extends State<MyHeaderDrawer> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                GestureDetector(
+                  onTap: () {
+                    pickImage(context);
+                  },
+                  child: _imagepath != null
+                      ? CircleAvatar(
+                          backgroundImage: FileImage(File(_imagepath!)),
+                          radius: 50,
+                        )
+                      : _image != null
+                          ? CircleAvatar(
+                              backgroundImage: FileImage(File(_image!.path)),
+                              radius: 50,
+                            )
+                          : CircleAvatar(
+                              backgroundImage:
+                                  AssetImage('assets/images/images.png')
+                                      as ImageProvider<Object>,
+                              radius: 50,
+                            ),
+                ),
+                SizedBox(height: 10),
                 Text(
                   "Welcome",
                   style: TextStyle(color: Colors.white, fontSize: 20),
@@ -191,10 +247,64 @@ class _MyHeaderDrawerState extends State<MyHeaderDrawer> {
       ),
     );
   }
+
+  void pickImage(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('Choose from gallery'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  final pickedImage = await ImagePicker().pickImage(
+                    source: ImageSource.gallery,
+                  );
+                  if (pickedImage != null) {
+                    setState(() {
+                      _image = pickedImage;
+                      SaveImage(_image!.path);
+                    });
+                  }
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text('Take a picture'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  final pickedImage = await ImagePicker().pickImage(
+                    source: ImageSource.camera,
+                  );
+                  if (pickedImage != null) {
+                    setState(() {
+                      _image = pickedImage;
+                      SaveImage(_image!.path);
+                    });
+                  }
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void SaveImage(path) async {
+    SharedPreferences saveImage = await SharedPreferences.getInstance();
+    saveImage.setString("imagepath", path);
+  }
+
+  void LoadImage() async {
+    SharedPreferences saveImage = await SharedPreferences.getInstance();
+    setState(() {
+      _imagepath = saveImage.getString("imagepath");
+    });
+  }
 }
 
-enum DrawerSections {
-  home,
-  calculator,
-  about,
-}
+enum DrawerSections { home, calculator, contacts, logout }

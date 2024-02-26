@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:navigation/Auths/SignUpForm.dart';
+import 'package:navigation/Auths/googleIn.dart';
 import 'package:navigation/Auths/login.dart';
+import 'package:navigation/main.dart';
+import 'package:provider/provider.dart';
 
 class SignUp extends StatelessWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -45,13 +48,21 @@ class SignUp extends StatelessWidget {
                     width: double.infinity,
                     child: OutlinedButton.icon(
                       icon: Image(
-                        image: AssetImage('assets/images/Logo-google-icon.png'),
+                        image: AssetImage('assets/images/Logo-google-icon.png',),
                         width: 20.0,
                       ),
-                      onPressed: () {
-                        // Implement Google sign-up logic here
+                      onPressed: () async {
+                        var user = await LoginAPI.login();
+                        if (user != null) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: ((context) => HomePage(
+                                      name: user.displayName!,
+                                      email: user.email))));
+                        }
                       },
-                      label: Text("Sign Up With Google"),
+                      label: Text("Continue With Google"),
                     ),
                   ),
                 ],

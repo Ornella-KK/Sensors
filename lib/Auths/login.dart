@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:navigation/Auths/googleIn.dart';
 import 'package:navigation/Auths/loginFom.dart';
 import 'package:navigation/Auths/signup.dart';
+import 'package:navigation/home.dart';
 import 'package:navigation/main.dart';
+import 'package:provider/provider.dart';
 
 class Login extends StatelessWidget {
   const Login({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
     final size = MediaQuery.of(context).size;
-
-    ColorFilter colorFilter = ColorFilter.mode(
-      Theme.of(context).brightness == Brightness.light
-          ? Colors.transparent
-          : Colors.white,
-      BlendMode.srcOut,
-    );
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -42,16 +37,23 @@ class Login extends StatelessWidget {
                   const Text("OR"),
                   SizedBox(
                     width: double.infinity,
-                    child: ColorFiltered(
-                      colorFilter: colorFilter,
-                      child: OutlinedButton.icon(
-                        icon: Image(
-                          image: AssetImage('assets/images/Logo-google-icon.png'),
-                          width: 20.0,
-                        ),
-                        onPressed: () {},
-                        label: Text("Sign In With Google"),
+                    child: OutlinedButton.icon(
+                      icon: Image(
+                        image: AssetImage('assets/images/Logo-google-icon.png'),
+                        width: 20.0,
                       ),
+                      onPressed: () async {
+                        var user = await LoginAPI.login();
+                        if (user != null) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: ((context) => HomePage(
+                                      name: user.displayName!,
+                                      email: user.email))));
+                        }
+                      },
+                      label: Text("Sign In With Google"),
                     ),
                   ),
                   const SizedBox(
@@ -79,5 +81,3 @@ class Login extends StatelessWidget {
     );
   }
 }
-
-
