@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:navigation/Auths/googleIn.dart';
 import 'package:navigation/Auths/login.dart';
-import 'package:navigation/Auths/logout.dart';
 import 'package:navigation/Auths/welcome.dart';
 import 'package:navigation/about.dart';
 import 'package:navigation/calculator.dart';
