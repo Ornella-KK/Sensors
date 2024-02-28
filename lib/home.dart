@@ -6,7 +6,7 @@ class WelcomePage extends StatelessWidget {
   final String name;
   final String email;
   const WelcomePage({Key? key, required this.name, required this.email}) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,13 +31,13 @@ class WelcomePage extends StatelessWidget {
               fit: BoxFit.contain,
             ), */
             SizedBox(height: 20),
-            Text(
+            /* Text(
               'Enter a world of convenience with our intuitive tools and easy customization options.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 18,
               ),
-            ),
+            ), */
           ],
         ),
       ),

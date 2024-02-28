@@ -234,9 +234,9 @@ class _MyHeaderDrawerState extends State<MyHeaderDrawer> {
                               radius: 50,
                             ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 5),
                 Text(
-                  "Welcome",
+                  "Change Profile",
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
               ],
