@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:navigation/Auths/login.dart';
 
 class SignupForm extends StatelessWidget {
   const SignupForm({Key? key}) : super(key: key);

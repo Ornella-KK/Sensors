@@ -3,17 +3,15 @@ import 'package:get/get.dart';
 import 'package:navigation/Auths/googleIn.dart';
 import 'package:navigation/Auths/loginFom.dart';
 import 'package:navigation/Auths/signup.dart';
-import 'package:navigation/home.dart';
-import 'package:navigation/main.dart';
-import 'package:provider/provider.dart';
+import '../Drawers/HomePage.dart';
 
 class Login extends StatelessWidget {
   const Login({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
+/*     final size = MediaQuery.of(context).size;
+ */
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(

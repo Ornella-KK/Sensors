@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:navigation/Auths/googleIn.dart';
-import 'package:provider/provider.dart';
 
 class WelcomePage extends StatelessWidget {
   final String name;
