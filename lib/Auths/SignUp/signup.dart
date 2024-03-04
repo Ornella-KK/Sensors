@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:navigation/Auths/SignUpForm.dart';
-import 'package:navigation/Auths/googleIn.dart';
-import 'package:navigation/Auths/login.dart';
-import '../Drawers/HomePage.dart';
+import 'package:navigation/Auths/SignUp/SignUpForm.dart';
+import 'package:navigation/Auths/Login/googleIn.dart';
+import 'package:navigation/Auths/Login/login.dart';
+import '../../Drawers/HomePage.dart';
 
 class SignUp extends StatelessWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -11,7 +11,8 @@ class SignUp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 /*     final size = MediaQuery.of(context).size;
- */    return Scaffold(
+ */
+    return Scaffold(
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(30.0),
@@ -47,19 +48,13 @@ class SignUp extends StatelessWidget {
                     width: double.infinity,
                     child: OutlinedButton.icon(
                       icon: Image(
-                        image: AssetImage('assets/images/Logo-google-icon.png',),
+                        image: AssetImage(
+                          'assets/images/Logo-google-icon.png',
+                        ),
                         width: 20.0,
                       ),
-                      onPressed: () async {
-                        var user = await LoginAPI.login();
-                        if (user != null) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: ((context) => HomePage(
-                                      name: user.displayName!,
-                                      email: user.email))));
-                        }
+                      onPressed: () {
+                        LoginAPI().signInWithGoogle(context);
                       },
                       label: Text("Continue With Google"),
                     ),

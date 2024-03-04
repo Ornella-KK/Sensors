@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "49456625906",
+    "project_id": "first24062",
+    "storage_bucket": "first24062.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:49456625906:android:7f41b4604a8bd4c20f386b",
+        "android_client_info": {
+          "package_name": "com.example.navigation"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqtV7cnxr3LI95sP9efB8GqsYmnds34QU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

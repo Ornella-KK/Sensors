@@ -1,10 +1,10 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../theme.dart';
-
 
 class MyHeaderDrawer extends StatefulWidget {
   @override
@@ -132,14 +132,22 @@ class _MyHeaderDrawerState extends State<MyHeaderDrawer> {
 
   void SaveImage(path) async {
     SharedPreferences saveImage = await SharedPreferences.getInstance();
-    saveImage.setString("imagepath", path);
+    // Use the user's UID as the key to save the image
+    String? uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      saveImage.setString(uid, path);
+    }
   }
 
   void LoadImage() async {
     SharedPreferences saveImage = await SharedPreferences.getInstance();
-    setState(() {
-      _imagepath = saveImage.getString("imagepath");
-    });
+    // Use the user's UID as the key to load the image
+    String? uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      setState(() {
+        _imagepath = saveImage.getString(uid);
+      });
+    }
   }
 }
 

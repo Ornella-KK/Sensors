@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:navigation/Auths/googleIn.dart';
-import 'package:navigation/Auths/loginFom.dart';
-import 'package:navigation/Auths/signup.dart';
-import '../Drawers/HomePage.dart';
+import '../../Drawers/HomePage.dart';
+import '../SignUp/signup.dart';
+import 'googleIn.dart';
+import 'loginFom.dart';
 
 class Login extends StatelessWidget {
   const Login({Key? key}) : super(key: key);
@@ -28,7 +28,7 @@ class Login extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyLarge,
               ), */
               //Login Form Begins
-              const LoginForm(),
+              LoginForm(),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -40,16 +40,8 @@ class Login extends StatelessWidget {
                         image: AssetImage('assets/images/Logo-google-icon.png'),
                         width: 20.0,
                       ),
-                      onPressed: () async {
-                        var user = await LoginAPI.login();
-                        if (user != null) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: ((context) => HomePage(
-                                      name: user.displayName!,
-                                      email: user.email))));
-                        }
+                      onPressed: () {
+                        LoginAPI().signInWithGoogle(context);
                       },
                       label: Text("Sign In With Google"),
                     ),

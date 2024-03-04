@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 class NetworkController extends GetxController {
   final Connectivity _connectivity = Connectivity();
+  bool _wasDisconnected = false;
 
   @override
   void onInit() {
@@ -13,13 +14,14 @@ class NetworkController extends GetxController {
 
   void _updateConnectionStatus(ConnectivityResult connectivityResult) {
     if (connectivityResult == ConnectivityResult.none) {
+      _wasDisconnected = true;
       _showNoInternetSnackbar();
     } else {
-      _closeSnackbarIfOpen();
-      if (connectivityResult == ConnectivityResult.mobile ||
-          connectivityResult == ConnectivityResult.wifi) {
+      if (_wasDisconnected) {
+        _wasDisconnected = false;
         _showBackOnlineSnackbar();
       }
+      _closeSnackbarIfOpen();
     }
   }
 
@@ -60,7 +62,6 @@ class NetworkController extends GetxController {
       snackStyle: SnackStyle.GROUNDED,
     );
   }
-
 
   void _closeSnackbarIfOpen() {
     if (Get.isSnackbarOpen) {

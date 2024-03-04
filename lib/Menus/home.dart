@@ -1,9 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class WelcomePage extends StatelessWidget {
-  final String name;
-  final String email;
-  const WelcomePage({Key? key, required this.name, required this.email}) : super(key: key);
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +14,7 @@ class WelcomePage extends StatelessWidget {
           children: [
             SizedBox(height: 20),
             Text(
-              'Welcome Back, $name!',
+              'Welcome Back, ${user.displayName ?? ''}',
               style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,

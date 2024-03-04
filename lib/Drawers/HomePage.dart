@@ -1,24 +1,19 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:navigation/Drawers/Drawers.dart';
-import 'package:navigation/Drawers/contacts.dart';
+import 'package:navigation/Menus/contacts.dart';
 import 'package:navigation/Menus/home.dart';
 import 'package:navigation/theme.dart';
 import 'package:provider/provider.dart';
-import '../Auths/googleIn.dart';
-import '../Auths/signup.dart';
+import '../Auths/Login/googleIn.dart';
+import '../Auths/SignUp/signup.dart';
 import '../Menus/calculator.dart';
 
-
 class HomePage extends StatefulWidget {
-  final String name;
-  final String email;
-  const HomePage({Key? key, required this.name, required this.email})
-      : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
-
 
 class _MyHomePageState extends State<HomePage> {
   var currentPage = DrawerSections.home;
@@ -29,7 +24,7 @@ class _MyHomePageState extends State<HomePage> {
     var themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     var container;
     if (currentPage == DrawerSections.home) {
-      container = WelcomePage(name: widget.name, email: widget.email);
+      container = WelcomePage();
     } else if (currentPage == DrawerSections.calculator) {
       container = Calculator();
     } else if (currentPage == DrawerSections.contacts) {
@@ -89,9 +84,10 @@ class _MyHomePageState extends State<HomePage> {
         onTap: () {
           Navigator.pop(context); // Close the drawer
           if (id == 4) {
-            LoginAPI.signOut();
+            /* LoginAPI.signOut();
             Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => SignUp()));
+                MaterialPageRoute(builder: (context) => SignUp())); */
+            FirebaseAuth.instance.signOut();
           } else {
             setState(() {
               if (id == 1) {
