@@ -1,16 +1,8 @@
-# GoogleApi
+# QuizApp
 
-A new Flutter project.
+The Quiz App is a mobile application that offers a diverse range of quizzes for users to enjoy and test their knowledge. With a user-friendly interface, the app provides an interactive quiz-taking experience, allowing users to select quizzes based on their interests and skill levels. The app features various question formats, including multiple-choice, true/false, and fill-in-the-blank, offering a dynamic and engaging experience. Users receive instant feedback on their answers and can track their progress over time. The Quiz App implements secure user authentication and data storage practices to protect user information and quiz data, ensuring a safe and enjoyable experience for all users.
 
-## Getting Started
+# Technologies Used:
+- Flutter(Dart)
+- Firebase & Firestore
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
