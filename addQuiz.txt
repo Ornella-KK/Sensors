@@ -1,0 +1,335 @@
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class CreateQuizScreen extends StatefulWidget {
+  @override
+  _CreateQuizScreenState createState() => _CreateQuizScreenState();
+}
+
+class _CreateQuizScreenState extends State<CreateQuizScreen> {
+  final TextEditingController _questionController = TextEditingController();
+  final TextEditingController _option1Controller = TextEditingController();
+  final TextEditingController _option2Controller = TextEditingController();
+  final TextEditingController _option3Controller = TextEditingController();
+  final TextEditingController _option4Controller = TextEditingController();
+  int _correctOptionIndex = 0;
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  int _currentQuestionIndex = 1; // Start with the first question
+
+  List<TextEditingController> _questionControllers = [];
+  List<TextEditingController> _option1Controllers = [];
+  List<TextEditingController> _option2Controllers = [];
+  List<TextEditingController> _option3Controllers = [];
+  List<TextEditingController> _option4Controllers = [];
+  List<int> _correctOptionIndices = []; // Start with the first question
+
+  void _createQuiz() {
+    // Check if all 5 questions are filled
+    if (_questionControllers.any((controller) => controller.text.isEmpty)) {
+      // Show an error message if any question is empty
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('Please fill in all 5 questions.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    // Collect all questions and options
+    Map<String, dynamic> quizData = {};
+    for (int i = 0; i < 5; i++) {
+      quizData['question${i + 1}'] = {
+        'question': _questionControllers[i].text,
+        'options': [
+          _option1Controllers[i].text,
+          _option2Controllers[i].text,
+          _option3Controllers[i].text,
+          _option4Controllers[i].text,
+        ],
+        'correctOptionId': _correctOptionIndices[i],
+      };
+    }
+
+    // Check the last used quiz ID
+    _firestore
+        .collection('Quizzes')
+        .orderBy(FieldPath.documentId, descending: true)
+        .limit(1)
+        .get()
+        .then((querySnapshot) {
+      int lastQuizId = 1; // Default to quizId1 if no quizzes are found
+      if (querySnapshot.docs.isNotEmpty) {
+        lastQuizId =
+            int.parse(querySnapshot.docs.first.id.split('quizId').last);
+      }
+
+      int newQuizId = lastQuizId + 1;
+
+      // Create a new quiz document in Firestore with the new quiz ID
+      _firestore.collection('Quizzes').doc('quizId$newQuizId').set({
+        'questions': quizData,
+      }).then((_) {
+        // Reset the text controllers and correct option indices
+        for (var controller in _questionControllers) {
+          controller.clear();
+        }
+        for (var controller in _option1Controllers) {
+          controller.clear();
+        }
+        for (var controller in _option2Controllers) {
+          controller.clear();
+        }
+        for (var controller in _option3Controllers) {
+          controller.clear();
+        }
+        for (var controller in _option4Controllers) {
+          controller.clear();
+        }
+        for (var index in _correctOptionIndices) {
+          index = 0;
+        }
+
+        // Show a success message and navigate back to the admin screen
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Success'),
+            content: Text('Questions added successfully.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                  Navigator.of(context).pop(); // Pop the current screen
+                },
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }).catchError((error) {
+        // Show error message
+        print('Error creating quiz: $error');
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the lists with controllers and indices
+    for (int i = 0; i < 5; i++) {
+      _questionControllers.add(TextEditingController());
+      _option1Controllers.add(TextEditingController());
+      _option2Controllers.add(TextEditingController());
+      _option3Controllers.add(TextEditingController());
+      _option4Controllers.add(TextEditingController());
+      _correctOptionIndices.add(0);
+    }
+  }
+
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Create Quiz'),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text('Enter 5 questions:'),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: _questionControllers[0],
+                decoration: InputDecoration(labelText: 'Question 1'),
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: _option1Controllers[0],
+                decoration:
+                    InputDecoration(labelText: 'Option 1 for Question 1'),
+              ),
+              TextField(
+                controller: _option2Controllers[0],
+                decoration:
+                    InputDecoration(labelText: 'Option 2 for Question 1'),
+              ),
+              TextField(
+                controller: _option3Controllers[0],
+                decoration:
+                    InputDecoration(labelText: 'Option 3 for Question 1'),
+              ),
+              TextField(
+                controller: _option4Controllers[0],
+                decoration:
+                    InputDecoration(labelText: 'Option 4 for Question 1'),
+              ),
+              TextField(
+                controller: _questionControllers[1],
+                decoration: InputDecoration(labelText: 'Question 2'),
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: _option1Controllers[1],
+                decoration:
+                    InputDecoration(labelText: 'Option 1 for Question 2'),
+              ),
+              TextField(
+                controller: _option2Controllers[1],
+                decoration:
+                    InputDecoration(labelText: 'Option 2 for Question 2'),
+              ),
+              TextField(
+                controller: _option3Controllers[1],
+                decoration:
+                    InputDecoration(labelText: 'Option 3 for Question 2'),
+              ),
+              TextField(
+                controller: _option4Controllers[1],
+                decoration:
+                    InputDecoration(labelText: 'Option 4 for Question 2'),
+              ),
+              TextField(
+                controller: _questionControllers[2],
+                decoration: InputDecoration(labelText: 'Question 3'),
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: _option4Controllers[2],
+                decoration:
+                    InputDecoration(labelText: 'Option 1 for Question 3'),
+              ),
+              TextField(
+                controller: _option4Controllers[2],
+                decoration:
+                    InputDecoration(labelText: 'Option 2 for Question 3'),
+              ),
+              TextField(
+                controller: _option4Controllers[2],
+                decoration:
+                    InputDecoration(labelText: 'Option 3 for Question 3'),
+              ),
+              TextField(
+                controller: _option4Controllers[2],
+                decoration:
+                    InputDecoration(labelText: 'Option 4 for Question 3'),
+              ),
+              TextField(
+                controller: _questionControllers[3],
+                decoration: InputDecoration(labelText: 'Question 4'),
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: _option4Controllers[3],
+                decoration:
+                    InputDecoration(labelText: 'Option 1 for Question 4'),
+              ),
+              TextField(
+                controller: _option4Controllers[3],
+                decoration:
+                    InputDecoration(labelText: 'Option 2 for Question 4'),
+              ),
+              TextField(
+                controller: _option4Controllers[3],
+                decoration:
+                    InputDecoration(labelText: 'Option 3 for Question 4'),
+              ),
+              TextField(
+                controller: _option4Controllers[3],
+                decoration:
+                    InputDecoration(labelText: 'Option 4 for Question 4'),
+              ),
+              TextField(
+                controller: _questionControllers[4],
+                decoration: InputDecoration(labelText: 'Question 5'),
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: _option4Controllers[4],
+                decoration:
+                    InputDecoration(labelText: 'Option 1 for Question 5'),
+              ),
+              TextField(
+                controller: _option4Controllers[4],
+                decoration:
+                    InputDecoration(labelText: 'Option 2 for Question 5'),
+              ),
+              TextField(
+                controller: _option4Controllers[4],
+                decoration:
+                    InputDecoration(labelText: 'Option 3 for Question 5'),
+              ),
+              TextField(
+                controller: _option4Controllers[4],
+                decoration:
+                    InputDecoration(labelText: 'Option 4 for Question 5'),
+              ),
+                            
+              
+              
+              
+              // Repeat the above pattern for the remaining questions
+              SizedBox(height: 16.0),
+                  Text('Correct Option:'),
+                  RadioListTile<int>(
+                    title: Text('Option 1'),
+                    value: 0,
+                    groupValue: _correctOptionIndices[i],
+                    onChanged: (value) {
+                      setState(() {
+                        _correctOptionIndices[i] = value!;
+                      });
+                    },
+                  ),
+                  RadioListTile<int>(
+                    title: Text('Option 2'),
+                    value: 1,
+                    groupValue: _correctOptionIndices[i],
+                    onChanged: (value) {
+                      setState(() {
+                        _correctOptionIndices[i] = value!;
+                      });
+                    },
+                  ),
+                  RadioListTile<int>(
+                    title: Text('Option 3'),
+                    value: 2,
+                    groupValue: _correctOptionIndices[i],
+                    onChanged: (value) {
+                      setState(() {
+                        _correctOptionIndices[i] = value!;
+                      });
+                    },
+                  ),
+                  RadioListTile<int>(
+                    title: Text('Option 4'),
+                    value: 3,
+                    groupValue: _correctOptionIndices[i],
+                    onChanged: (value) {
+                      setState(() {
+                        _correctOptionIndices[i] = value!;
+                      });
+                    },
+                  ),
+              SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: _createQuiz,
+                child: Text('Create Quiz'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

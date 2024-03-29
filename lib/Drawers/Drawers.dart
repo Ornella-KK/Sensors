@@ -54,26 +54,48 @@ class _MyHeaderDrawerState extends State<MyHeaderDrawer> {
                   onTap: () {
                     pickImage(context);
                   },
-                  child: _imagepath != null
-                      ? CircleAvatar(
-                          backgroundImage: FileImage(File(_imagepath!)),
-                          radius: 50,
-                        )
-                      : _image != null
+                  child: Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      _imagepath != null
                           ? CircleAvatar(
-                              backgroundImage: FileImage(File(_image!.path)),
+                              backgroundImage: FileImage(File(_imagepath!)),
                               radius: 50,
                             )
-                          : CircleAvatar(
-                              backgroundImage:
-                                  AssetImage('assets/images/images.png')
-                                      as ImageProvider<Object>,
-                              radius: 50,
-                            ),
+                          : _image != null
+                              ? CircleAvatar(
+                                  backgroundImage:
+                                      FileImage(File(_image!.path)),
+                                  radius: 50,
+                                )
+                              : CircleAvatar(
+                                  backgroundImage:
+                                      AssetImage('assets/images/images.png')
+                                          as ImageProvider<Object>,
+                                  radius: 50,
+                                ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.edit,
+                            size: 20,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 SizedBox(height: 5),
                 Text(
-                  "Change Profile",
+                  "Welcome",
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
               ],
@@ -151,4 +173,13 @@ class _MyHeaderDrawerState extends State<MyHeaderDrawer> {
   }
 }
 
-enum DrawerSections { home, calculator, contacts, logout }
+enum DrawerSections {
+  home,
+  calculator,
+  contacts,
+  quiz,
+  logout,
+  createQuiz,
+  scores,
+  homeMap
+}

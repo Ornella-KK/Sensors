@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:navigation/Drawers/Drawers.dart';
 import 'package:navigation/Menus/contacts.dart';
 import 'package:navigation/Menus/home.dart';
+import 'package:navigation/Menus/maps/home_location.dart';
 import 'package:navigation/theme.dart';
 import 'package:provider/provider.dart';
-import '../Auths/Login/googleIn.dart';
-import '../Auths/SignUp/signup.dart';
+import '../Auths/Login/login.dart';
+import '../Menus/Quiz/Screen/quiz_list.dart';
 import '../Menus/calculator.dart';
+import '../session.dart';
 
 class HomePage extends StatefulWidget {
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -20,6 +21,12 @@ class _MyHomePageState extends State<HomePage> {
   String appBarTitle = "Home";
 
   @override
+  void initState() {
+    super.initState();
+    currentPage = DrawerSections.home;
+    appBarTitle = "Home";
+  }
+
   Widget build(BuildContext context) {
     var themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     var container;
@@ -29,7 +36,13 @@ class _MyHomePageState extends State<HomePage> {
       container = Calculator();
     } else if (currentPage == DrawerSections.contacts) {
       container = ContactPage();
-    }
+    } else if (currentPage == DrawerSections.quiz) {
+      container = QuizListPage();
+    }  else if (currentPage == DrawerSections.homeMap) {
+      container = HomeMap();
+    }/*else if (currentPage == DrawerSections.scores) {
+      container = AdminScoresScreen();
+    } */
     return Scaffold(
       appBar: AppBar(
         backgroundColor: themeProvider.getTheme.primaryColor,
@@ -65,13 +78,17 @@ class _MyHomePageState extends State<HomePage> {
               currentPage == DrawerSections.calculator ? true : false),
           menuItem(3, "Contacts", Icons.contacts,
               currentPage == DrawerSections.contacts ? true : false),
+          menuItem(4, "Quiz", Icons.quiz,
+              currentPage == DrawerSections.quiz ? true : false),
+          menuItem(5, "Maps", Icons.location_pin,
+              currentPage == DrawerSections.homeMap ? true : false),
           Divider(),
           menuItem(
-            4,
+            6,
             "Logout",
             Icons.logout,
             false,
-          )
+          ),
         ],
       ),
     );
@@ -82,12 +99,19 @@ class _MyHomePageState extends State<HomePage> {
       color: selected ? Colors.grey[300] : Colors.transparent,
       child: InkWell(
         onTap: () {
-          Navigator.pop(context); // Close the drawer
-          if (id == 4) {
-            /* LoginAPI.signOut();
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => SignUp())); */
-            FirebaseAuth.instance.signOut();
+          Navigator.pop(context);
+          if (id == 6) {
+            FirebaseAuth.instance.signOut().then((_) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Login(),
+                ),
+              );
+              SessionManager.endSession();
+            }).catchError((error) {
+              print('Failed to sign out: $error');
+            });
           } else {
             setState(() {
               if (id == 1) {
@@ -99,6 +123,12 @@ class _MyHomePageState extends State<HomePage> {
               } else if (id == 3) {
                 currentPage = DrawerSections.contacts;
                 appBarTitle = "Contacts";
+              } else if (id == 4) {
+                currentPage = DrawerSections.quiz;
+                appBarTitle = "Quiz";
+              }else if (id == 5) {
+                currentPage = DrawerSections.homeMap;
+                appBarTitle = "Home Location";
               }
             });
           }
