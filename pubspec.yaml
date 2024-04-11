@@ -56,7 +56,11 @@ dependencies:
   google_maps_flutter: ^2.5.3
   geolocator: ^11.0.0
   flutter_svg: ^2.0.10+1
-
+  url_launcher: ^6.2.5
+  sensors_plus: ^4.0.2
+  pedometer: ^4.0.1
+  flutter_compass: ^0.8.0
+  light_sensor: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -92,6 +96,8 @@ flutter:
     - assets/images/transparent-green-background.jpg
     - assets/images/Logo-google-icon.png
     - assets/images/images.png
+    - assets/images/cmpass_map.png
+    - assets/images/compass.jpg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -181,5 +181,8 @@ enum DrawerSections {
   logout,
   createQuiz,
   scores,
-  homeMap
+  homeMap,
+  light,
+  steps,
+  compass
 }

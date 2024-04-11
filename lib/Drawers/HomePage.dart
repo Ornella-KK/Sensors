@@ -7,8 +7,13 @@ import 'package:navigation/Menus/maps/home_location.dart';
 import 'package:navigation/theme.dart';
 import 'package:provider/provider.dart';
 import '../Auths/Login/login.dart';
+import '../Menus/Compass/compass.dart';
+import '../Menus/Light/light_sensor.dart';
 import '../Menus/Quiz/Screen/quiz_list.dart';
+import '../Menus/Steps/step_counter.dart';
+import '../Menus/Steps/steps_count.dart';
 import '../Menus/calculator.dart';
+import '../Menus/maps/location_options.dart';
 import '../session.dart';
 
 class HomePage extends StatefulWidget {
@@ -39,10 +44,16 @@ class _MyHomePageState extends State<HomePage> {
     } else if (currentPage == DrawerSections.quiz) {
       container = QuizListPage();
     }  else if (currentPage == DrawerSections.homeMap) {
-      container = HomeMap();
-    }/*else if (currentPage == DrawerSections.scores) {
-      container = AdminScoresScreen();
-    } */
+      container = LocationPage();
+    } else if (currentPage == DrawerSections.light) {
+      container = LightSensorPage();
+    } else if (currentPage == DrawerSections.steps) {
+      container = StepCounterApp();
+    } else if (currentPage == DrawerSections.compass) {
+      container = CompassWidget();
+    }
+
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: themeProvider.getTheme.primaryColor,
@@ -82,9 +93,15 @@ class _MyHomePageState extends State<HomePage> {
               currentPage == DrawerSections.quiz ? true : false),
           menuItem(5, "Maps", Icons.location_pin,
               currentPage == DrawerSections.homeMap ? true : false),
+          menuItem(6, "Light Sensor", Icons.lightbulb,
+              currentPage == DrawerSections.light ? true : false),
+          menuItem(7, "Step Counter", Icons.directions_walk,
+              currentPage == DrawerSections.steps ? true : false),
+          menuItem(8, "Compass", Icons.compass_calibration,
+              currentPage == DrawerSections.compass ? true : false),
           Divider(),
           menuItem(
-            6,
+            9,
             "Logout",
             Icons.logout,
             false,
@@ -100,7 +117,7 @@ class _MyHomePageState extends State<HomePage> {
       child: InkWell(
         onTap: () {
           Navigator.pop(context);
-          if (id == 6) {
+          if (id == 9) {
             FirebaseAuth.instance.signOut().then((_) {
               Navigator.pushReplacement(
                 context,
@@ -128,7 +145,19 @@ class _MyHomePageState extends State<HomePage> {
                 appBarTitle = "Quiz";
               }else if (id == 5) {
                 currentPage = DrawerSections.homeMap;
-                appBarTitle = "Home Location";
+                appBarTitle = "Location";
+              }
+              else if (id == 6) {
+                currentPage = DrawerSections.light;
+                appBarTitle = "Light Sensor";
+              }
+              else if (id == 7) {
+                currentPage = DrawerSections.steps;
+                appBarTitle = "Step Counter";
+              }
+              else if (id == 8) {
+                currentPage = DrawerSections.compass;
+                appBarTitle = "Compass";
               }
             });
           }
