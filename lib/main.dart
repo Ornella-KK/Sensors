@@ -13,8 +13,6 @@ import 'firebase_options.dart';
 import 'notifications/notification.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
-// Removed Firebase Messaging initialization and message listening outside Firestore listener
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
