@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pedometer/pedometer.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 String formatDate(DateTime d) {
   return d.toString().substring(0, 19);
@@ -16,18 +17,56 @@ class _StepCounterAppState extends State<StepCounterApp> {
   late Stream<StepCount> _stepCountStream;
   late Stream<PedestrianStatus> _pedestrianStatusStream;
   String _status = '?', _steps = '?';
+  int _initialSteps = 0;
+
+  late FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
+    _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    final InitializationSettings initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
+    );
+    _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+    _pedestrianStatusStream = Pedometer.pedestrianStatusStream;
+    _pedestrianStatusStream
+        .listen(onPedestrianStatusChanged)
+        .onError(onPedestrianStatusError);
+
+    _stepCountStream = Pedometer.stepCountStream;
+    _stepCountStream.listen(onStepCount).onError(onStepCountError);
   }
 
   void onStepCount(StepCount event) {
     print(event);
     setState(() {
       _steps = event.steps.toString();
+      if (_initialSteps == 0) {
+        _initialSteps = event.steps;
+      } else if (event.steps > _initialSteps && _status == 'walking') {
+        _showNotification();
+      }
     });
+  }
+
+  void _showNotification() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+            'your channel id', 'your channel name',
+            importance: Importance.max, priority: Priority.high, showWhen: false);
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await _flutterLocalNotificationsPlugin.show(
+      0,
+      'Motion Detected',
+      'Motion detected while walking',
+      platformChannelSpecifics,
+    );
   }
 
   void onPedestrianStatusChanged(PedestrianStatus event) {
@@ -37,7 +76,6 @@ class _StepCounterAppState extends State<StepCounterApp> {
       _status = event.status;
     });
   }
-
 
   void onPedestrianStatusError(error) {
     print('onPedestrianStatusError: $error');
@@ -60,16 +98,6 @@ class _StepCounterAppState extends State<StepCounterApp> {
       // Handle denied permission
       return;
     }
-
-    _pedestrianStatusStream = Pedometer.pedestrianStatusStream;
-    _pedestrianStatusStream
-        .listen(onPedestrianStatusChanged)
-        .onError(onPedestrianStatusError);
-
-    _stepCountStream = Pedometer.stepCountStream;
-    _stepCountStream.listen(onStepCount).onError(onStepCountError);
-
-    if (!mounted) return;
   }
 
   @override
